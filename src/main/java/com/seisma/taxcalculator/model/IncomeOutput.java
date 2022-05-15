@@ -1,6 +1,5 @@
 package com.seisma.taxcalculator.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,7 +17,6 @@ public class IncomeOutput {
 
     private int netIncome;
 
-    @JsonProperty("super")
     private int superAmount;
 
 }
