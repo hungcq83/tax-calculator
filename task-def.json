@@ -1,6 +1,7 @@
 {
   "family": "tax-calculator",
   "networkMode": "awsvpc",
+  "executionRoleArn": "arn:aws:iam::404773554099:role/ecsTaskExecutionRole",
   "containerDefinitions": [
     {
       "name": "tax-calculator",
