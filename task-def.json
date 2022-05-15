@@ -6,6 +6,15 @@
     {
       "name": "tax-calculator",
       "image": "404773554099.dkr.ecr.us-east-1.amazonaws.com/tax-calculator:latest",
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "secretOptions": null,
+        "options": {
+          "awslogs-group": "/ecs/tax-calculator",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
       "portMappings": [
         {
           "containerPort": 8080,
