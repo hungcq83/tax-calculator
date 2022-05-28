@@ -188,7 +188,7 @@ resource "aws_ecs_service" "tax_calculator_service" {
   cluster         = "${aws_ecs_cluster.dev.id}"             # Referencing our created Cluster
   task_definition = "${aws_ecs_task_definition.tax_calculator.arn}" # Referencing the task our service will spin up
   launch_type     = "FARGATE"
-  desired_count   = 3 # Setting the number of containers to 3
+  desired_count   = 1 # Setting the number of containers to 3
 
   load_balancer {
     target_group_arn = "${aws_lb_target_group.target_group.arn}" # Referencing our target group

@@ -5,7 +5,7 @@
   "containerDefinitions": [
     {
       "name": "tax-calculator",
-      "image": "404773554099.dkr.ecr.us-east-1.amazonaws.com/tax-calculator:latest",
+      "image": "404773554099.dkr.ecr.us-east-1.amazonaws.com/tax-calculator-repo:latest",
       "logConfiguration": {
         "logDriver": "awslogs",
         "secretOptions": null,
