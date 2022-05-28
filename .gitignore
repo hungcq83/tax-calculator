@@ -37,3 +37,5 @@ build/
 **/*.tf.state
 **/*.lock.hcl
 **/*.tfstate
+**/*.tf.plan
+**/*.tfstate.backup
