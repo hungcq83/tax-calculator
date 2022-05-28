@@ -101,8 +101,8 @@ resource "aws_ecs_task_definition" "tax_calculator" {
       "essential": true,
       "portMappings": [
         {
-          "containerPort": 3000,
-          "hostPort": 3000
+          "containerPort": 8080,
+          "hostPort": 8080
         }
       ],
       "memory": 512,
@@ -193,7 +193,7 @@ resource "aws_ecs_service" "tax_calculator_service" {
   load_balancer {
     target_group_arn = "${aws_lb_target_group.target_group.arn}" # Referencing our target group
     container_name   = "${aws_ecs_task_definition.tax_calculator.family}"
-    container_port   = 3000 # Specifying the container port
+    container_port   = 8080 # Specifying the container port
   }
 
   network_configuration {
