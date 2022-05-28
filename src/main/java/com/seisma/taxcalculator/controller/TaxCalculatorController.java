@@ -1,6 +1,6 @@
 package com.seisma.taxcalculator.controller;
 
-import com.seisma.taxcalculator.model.IncomeInput;
+import com.seisma.taxcalculator.model.Employee;
 import com.seisma.taxcalculator.service.TaxCalculatorService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class TaxCalculatorController {
     private TaxCalculatorService taxCalculatorService;
 
     @PostMapping("/tax/calculator")
-    public ResponseEntity calculateTax(@RequestBody @NotEmpty List<@Valid IncomeInput> inputs) {
+    public ResponseEntity calculateTax(@RequestBody @NotEmpty List<@Valid Employee> inputs) {
         return ResponseEntity.ok(taxCalculatorService.calculateIncomes(inputs));
     }
 }

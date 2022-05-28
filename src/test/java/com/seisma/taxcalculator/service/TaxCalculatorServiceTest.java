@@ -2,11 +2,12 @@ package com.seisma.taxcalculator.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.seisma.taxcalculator.config.PropertyConfigs;
-import com.seisma.taxcalculator.config.TaxInfo;
-import com.seisma.taxcalculator.model.IncomeInput;
-import com.seisma.taxcalculator.model.IncomeOutput;
+import com.seisma.taxcalculator.entity.TaxRateEntity;
+import com.seisma.taxcalculator.model.Employee;
+import com.seisma.taxcalculator.model.IncomeResponse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import com.seisma.taxcalculator.repository.TaxRateRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,20 +21,18 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @ExtendWith(SpringExtension.class)
 public class TaxCalculatorServiceTest {
 
-    private static List<IncomeInput> inputs;
+    private static List<Employee> inputs;
 
     private static ObjectMapper mapper = new ObjectMapper();
 
     @Mock
-    private PropertyConfigs propertyConfigs;
+    private TaxRateRepository taxRateRepository;
 
     @InjectMocks
     private TaxCalculatorService taxCalculatorService;
@@ -41,73 +40,48 @@ public class TaxCalculatorServiceTest {
     @BeforeAll
     static void init() throws IOException {
         InputStream stream = TaxCalculatorServiceTest.class.getResourceAsStream("/inputs.json");
-        inputs = mapper.readValue(stream, new TypeReference<List<IncomeInput>>(){});
+        inputs = mapper.readValue(stream, new TypeReference<List<Employee>>(){});
     }
 
     @BeforeEach
     void setup() {
-        when(propertyConfigs.getIncomeTaxRates()).thenReturn(getTaxRates());
-    }
-
-    Map<Integer, TaxInfo> getTaxRates() {
-        var taxRates = new LinkedHashMap<Integer, TaxInfo>();
-        taxRates.put(180001,
-                TaxInfo.builder()
-                    .start(54232)
-                    .rate(0.45)
-                    .build()
+        when(taxRateRepository.findAll()).thenReturn(
+            Arrays.asList(
+                    new TaxRateEntity(0, 0, 0, 0),
+                    new TaxRateEntity(1, 18201, 0.19f, 0),
+                    new TaxRateEntity(2, 37001, 0.325f, 3572),
+                    new TaxRateEntity(3, 87001, 0.37f, 19822),
+                    new TaxRateEntity(4, 180001, 0.45f, 54232)
+            )
         );
-        taxRates.put(87001,
-                TaxInfo.builder()
-                        .start(19822)
-                        .rate(0.37)
-                        .build()
-        );
-        taxRates.put(37001,
-                TaxInfo.builder()
-                        .start(3572)
-                        .rate(0.325)
-                        .build()
-        );
-        taxRates.put(18201,
-                TaxInfo.builder()
-                        .start(0)
-                        .rate(0.19)
-                        .build()
-        );
-        taxRates.put(0,
-                TaxInfo.builder()
-                        .start(0)
-                        .rate(0)
-                        .build()
-        );
-
-        return taxRates;
     }
 
     @Test
     void testZeroTax() {
-        IncomeOutput incomeOutput;
+        IncomeResponse incomeResponse;
 
         inputs.get(0).setAnnualSalary(18200);
-        incomeOutput = taxCalculatorService.calculateIncomes(inputs).get(0);
-        assertEquals(incomeOutput.getIncomeTax(), 0);
+        incomeResponse = taxCalculatorService.calculateIncomes(inputs).get(0);
+        assertEquals(incomeResponse.getIncomeTax(), 0);
 
         inputs.get(0).setAnnualSalary(0);
-        incomeOutput = taxCalculatorService.calculateIncomes(inputs).get(0);
-        assertEquals(incomeOutput.getIncomeTax(), 0);
+        incomeResponse = taxCalculatorService.calculateIncomes(inputs).get(0);
+        assertEquals(incomeResponse.getIncomeTax(), 0);
+
+        assertEquals(incomeResponse.getFromDate(), "1 March");
+        assertEquals(incomeResponse.getToDate(), "31 March");
     }
 
     @Test
     void testFirstRangeTax() {
-        IncomeOutput incomeOutput;
+        IncomeResponse incomeResponse;
 
         inputs.get(0).setAnnualSalary(18200);
-        incomeOutput = taxCalculatorService.calculateIncomes(inputs).get(0);
-        assertEquals(0, incomeOutput.getIncomeTax());
+        incomeResponse = taxCalculatorService.calculateIncomes(inputs).get(0);
+        assertEquals(0, incomeResponse.getIncomeTax());
 
         inputs.get(0).setAnnualSalary(37000);
-        incomeOutput = taxCalculatorService.calculateIncomes(inputs).get(0);
-        assertEquals(298, incomeOutput.getIncomeTax());
+        incomeResponse = taxCalculatorService.calculateIncomes(inputs).get(0);
+        assertEquals(298, incomeResponse.getIncomeTax());
     }
 }
